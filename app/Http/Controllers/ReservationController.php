@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Reservations\ReservationRequest;
+use App\Mail\MeetingURL;
 use App\Models\Doctor;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Jubaer\Zoom\Facades\Zoom;
 
 
@@ -62,6 +64,8 @@ class ReservationController extends Controller
         $reservation = Reservation::create($request->all());
         $reservation->meeting_url = $meeting['data']['join_url'];
         $reservation->save();
+
+        Mail::to($request->patient_email)->send(new MeetingURL($meeting['data']['join_url']));
 
         return response()->json(['meeting_url' => $meeting['data']['join_url']], 200);
     }
