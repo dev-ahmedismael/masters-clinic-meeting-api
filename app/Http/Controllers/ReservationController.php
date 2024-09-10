@@ -53,12 +53,19 @@ class ReservationController extends Controller
         }
 
         $meeting = Zoom::createMeeting([
-            'topic' => 'خدمة الطب الإتصالي من عيادات ماسترز كلينك',
+            'topic' => $doctor['name'],
             'type' => 2, // 1 => instant, 2 => scheduled
             'start_time' =>  $date . 'T' . $request->input('time') . 'Z',
             'duration' => 30, // in minutes
-            'timezone' => 'UTC + 3',
+            'timezone' => 'Asia/Riyadh', // Set time zone to Riyadh
             'password' => 'amnc',
+            'settings' => [
+                'waiting_room' => true, // Enable Waiting Room
+                'join_before_host' => false, // Disable Join Before Host
+                'host_video' => true,
+                'participant_video' => true,
+                'mute_upon_entry' => true,
+            ],
         ]);
 
         $reservation = Reservation::create($request->all());
